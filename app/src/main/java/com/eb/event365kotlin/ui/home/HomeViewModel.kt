@@ -7,10 +7,7 @@ import com.eb.event365kotlin.repository.HomeRepository
 
 class HomeViewModel (private val repository: HomeRepository):BaseViewModel(){
 
-    fun loadPosts():LiveData<APIResponse>{
-            setLoad(true)
-            val mutableLiveData = repository.fetchProfile()
-            setLoad(false)
-        return mutableLiveData
+    fun loadPosts(){
+
     }
 }
