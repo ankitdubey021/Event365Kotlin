@@ -22,6 +22,7 @@ abstract class BaseViewModel (val schedulerProvider: SchedulerProvider)  : ViewM
     private val _authError : MutableLiveData<Boolean> = MutableLiveData()
 
 
+
     val loading: LiveData<Boolean> get() = _loading
     val error: LiveData<Throwable> get() = _throwable
     val authError: LiveData<Boolean> get() = _authError

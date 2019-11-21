@@ -1,15 +1,21 @@
 package com.eb.event365kotlin.screens.home
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.eb.event365kotlin.common.base.BaseViewModel
+import com.eb.event365kotlin.common.models.User
+import com.eb.event365kotlin.common.models.UserDao
 import com.eb.event365kotlin.common.schedulers.SchedulerProvider
 import com.eb.event365kotlin.repository.HomeRepository
-import com.google.gson.JsonElement
 
 
 
 class HomeViewModel (schedulerProvider: SchedulerProvider,
                      private val repository: HomeRepository):BaseViewModel(schedulerProvider){
+
+    private val _userDao: MutableLiveData<User> = MutableLiveData()
+    val userDao : LiveData<User> get() = _userDao
 
     init {
         Log.e("view model","started!")
@@ -28,8 +34,8 @@ class HomeViewModel (schedulerProvider: SchedulerProvider,
         }
     }
 
-    private fun showResult(it: JsonElement?) {
-        Log.i("yes",it.toString());
+    private fun showResult(it: UserDao) {
+        _userDao.postValue(it.data.get(0))
     }
 
     override fun onCleared() {
