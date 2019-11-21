@@ -1,11 +1,9 @@
 package com.eb.event365kotlin.common
 
 import android.content.Context
-import com.eb.event365kotlin.common.schedulers.SchedulerProvider
+
 import com.eb.event365kotlin.common.utils.BASE_URL
 import com.eb.event365kotlin.common.utils.SharedPrefWrapper
-import com.eb.event365kotlin.repository.HomeRepository
-import com.eb.event365kotlin.screens.home.HomeViewModel
 
 
 import com.squareup.moshi.Moshi
@@ -28,7 +26,6 @@ val applicationModules = module {
     single { androidApplication().getSharedPreferences("event365kotlin", Context.MODE_PRIVATE) }
     single { SharedPrefWrapper(get()) }
 
-    single { SchedulerProvider() }
 
     single<ApiService> {
         createWebService(
@@ -37,9 +34,6 @@ val applicationModules = module {
             BASE_URL
         )
     }
-
-    factory { HomeRepository(get()) }
-    viewModel { HomeViewModel(get(),get()) }
 }
 
 

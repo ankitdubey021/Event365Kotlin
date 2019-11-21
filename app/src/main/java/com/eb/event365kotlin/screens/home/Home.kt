@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.eb.event365kotlin.R
+import com.eb.event365kotlin.common.ApiService
 import com.eb.event365kotlin.common.extensions.hide
 import com.eb.event365kotlin.common.extensions.show
 import com.eb.event365kotlin.common.extensions.text
@@ -16,13 +18,21 @@ import org.koin.android.ext.android.inject
 
 class Home : AppCompatActivity() {
 
-    private val viewModel:HomeViewModel by inject()
+    private lateinit var viewModel:HomeViewModel
+    private lateinit var viewModelFactory: HomeViewModelFactory
+
+    private val apiService:ApiService by inject()
+
     private lateinit var binding : ActivityHomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding=DataBindingUtil.setContentView(this,R.layout.activity_home);
+
+
+        viewModelFactory= HomeViewModelFactory(apiService)
+        viewModel=ViewModelProviders.of(this,viewModelFactory).get(HomeViewModel::class.java)
 
         binding.viewmodel=viewModel
         binding.lifecycleOwner=this

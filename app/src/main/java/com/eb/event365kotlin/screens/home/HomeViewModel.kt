@@ -3,16 +3,17 @@ package com.eb.event365kotlin.screens.home
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.eb.event365kotlin.common.ApiService
 import com.eb.event365kotlin.common.base.BaseViewModel
 import com.eb.event365kotlin.common.models.User
 import com.eb.event365kotlin.common.models.UserDao
-import com.eb.event365kotlin.common.schedulers.SchedulerProvider
-import com.eb.event365kotlin.repository.HomeRepository
+import com.eb.event365kotlin.common.utils.AUTH
+
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
-
-class HomeViewModel (schedulerProvider: SchedulerProvider,
-                     private val repository: HomeRepository):BaseViewModel(schedulerProvider){
+class HomeViewModel(val apiService: ApiService) : BaseViewModel(){
 
     private val _userDao: MutableLiveData<User> = MutableLiveData()
     val userDao : LiveData<User> get() = _userDao
@@ -23,8 +24,9 @@ class HomeViewModel (schedulerProvider: SchedulerProvider,
 
     fun loadPosts(){
         add {
-            repository.fetchProfile()
-                .compose(applySchedulers())
+            apiService.getProfile(AUTH)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { setLoad(true) }
                 .doOnTerminate { setLoad(false) }
                 .subscribe(
