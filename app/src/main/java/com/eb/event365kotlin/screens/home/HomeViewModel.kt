@@ -1,4 +1,4 @@
-package com.eb.event365kotlin.ui.home
+package com.eb.event365kotlin.screens.home
 
 import android.util.Log
 import com.eb.event365kotlin.common.base.BaseViewModel
@@ -10,6 +10,10 @@ import com.google.gson.JsonElement
 
 class HomeViewModel (schedulerProvider: SchedulerProvider,
                      private val repository: HomeRepository):BaseViewModel(schedulerProvider){
+
+    init {
+        Log.e("view model","started!")
+    }
 
     fun loadPosts(){
         add {
@@ -28,5 +32,9 @@ class HomeViewModel (schedulerProvider: SchedulerProvider,
         Log.i("yes",it.toString());
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        Log.e("view model","cleared")
+    }
 
 }

@@ -5,7 +5,7 @@ import com.eb.event365kotlin.common.schedulers.SchedulerProvider
 import com.eb.event365kotlin.common.utils.BASE_URL
 import com.eb.event365kotlin.common.utils.SharedPrefWrapper
 import com.eb.event365kotlin.repository.HomeRepository
-import com.eb.event365kotlin.ui.home.HomeViewModel
+import com.eb.event365kotlin.screens.home.HomeViewModel
 
 
 import com.squareup.moshi.Moshi
