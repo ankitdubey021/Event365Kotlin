@@ -9,8 +9,10 @@ import com.eb.event365kotlin.common.models.User
 import com.eb.event365kotlin.common.models.UserDao
 import com.eb.event365kotlin.common.utils.AUTH
 
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 
 class HomeViewModel(val apiService: ApiService) : BaseViewModel(){
@@ -23,26 +25,14 @@ class HomeViewModel(val apiService: ApiService) : BaseViewModel(){
     }
 
     fun loadPosts(){
-        add {
-            apiService.getProfile(AUTH)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { setLoad(true) }
-                .doOnTerminate { setLoad(false) }
-                .subscribe(
-                    { showResult(it)},
-                    { setError(it)}
-                )
+        GlobalScope.launch (Dispatchers.Main){
+            val list=async (Dispatchers.IO) { apiService.getProfile(AUTH)}
+            showResult(list.await())
         }
     }
 
     private fun showResult(it: UserDao) {
         _userDao.postValue(it.data.get(0))
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.e("view model","cleared")
     }
 
 }

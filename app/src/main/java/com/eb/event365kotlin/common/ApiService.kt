@@ -10,8 +10,6 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 
 interface ApiService {
-
     @GET("profileDetail")
-    fun getProfile(@Header("Authorization") token: String): Observable<UserDao>
-
+    suspend fun getProfile(@Header("Authorization") token: String): UserDao
 }
