@@ -7,42 +7,48 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import retrofit2.HttpException
+import kotlin.coroutines.CoroutineContext
 
-abstract class BaseViewModel ()  : ViewModel(){
+
+abstract class BaseViewModel : ViewModel(), CoroutineScope{
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job + handler
+
+    private val job: Job= Job()
 
     private val _loading : MutableLiveData<Boolean> = MutableLiveData()
     private val _throwable : MutableLiveData<Throwable> = MutableLiveData()
     private val _authError : MutableLiveData<Boolean> = MutableLiveData()
 
-
-
     val loading: LiveData<Boolean> get() = _loading
     val error: LiveData<Throwable> get() = _throwable
     val authError: LiveData<Boolean> get() = _authError
 
-    fun setLoad(state: Boolean) {
-            _loading.value = state
+    fun changeState(load:Boolean=false,authError: Boolean?=false, error:Throwable?=null){
+        _loading.postValue(load)
+        _authError.postValue(authError)
+        _throwable.postValue(error)
     }
 
-    fun setError(state: Throwable) {
-        if (state is HttpException && state.code()==401)
-            _authError.postValue(true)
-        else
-            _throwable.value = state
-    }
-
-    val compositeDisposable = CompositeDisposable()
-
-
-    fun add(disposable: () -> Disposable) {
-        compositeDisposable.add(disposable())
-    }
 
     @CallSuper
     override fun onCleared() {
         super.onCleared()
-        compositeDisposable.dispose()
+        job.cancel()
+    }
+
+    val handler = CoroutineExceptionHandler { _, exception ->
+        exception.printStackTrace()
+        if (exception is HttpException && exception.code()==401)
+            changeState(authError = true)
+        else
+            changeState(error = exception)
     }
 
 }

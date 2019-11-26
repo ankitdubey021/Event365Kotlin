@@ -21,9 +21,14 @@ class HomeViewModel(val apiService: ApiService) : BaseViewModel(){
     }
 
     fun loadPosts(){
-        GlobalScope.launch (Dispatchers.Main + handler){
-            val list=async (Dispatchers.IO) { apiService.getProfile(AUTH)}
-            showResult(list.await())
+        Log.e("view model","fired!")
+        GlobalScope.launch(coroutineContext){
+            changeState(load = true)
+            val list= withContext(Dispatchers.IO) {
+                apiService.getProfile(AUTH)
+            }
+            changeState(false,false,null)
+            showResult(list)
         }
     }
 
@@ -31,7 +36,4 @@ class HomeViewModel(val apiService: ApiService) : BaseViewModel(){
         _userDao.postValue(it.data.get(0))
     }
 
-    val handler = CoroutineExceptionHandler { _, exception ->
-        Log.d("", "$exception handled !")
-    }
 }

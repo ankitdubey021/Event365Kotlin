@@ -7,13 +7,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.eb.event365kotlin.R
 import com.eb.event365kotlin.common.ApiService
-import com.eb.event365kotlin.common.extensions.hide
-import com.eb.event365kotlin.common.extensions.show
-import com.eb.event365kotlin.common.extensions.text
-import com.eb.event365kotlin.common.extensions.toast
+import com.eb.event365kotlin.common.extensions.*
 import com.eb.event365kotlin.databinding.ActivityHomeBinding
+import com.eb.event365kotlin.screens.SecondActivity
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.android.inject
+import kotlin.coroutines.CoroutineContext
 
 
 class Home : AppCompatActivity() {
@@ -39,7 +39,8 @@ class Home : AppCompatActivity() {
 
         viewModel.loading.observe(this, Observer { if(it)pBar.show() else pBar.hide()})
         viewModel.authError.observe(this, Observer { if(it) toast { text { "Your session has been expired!" }}})
-        viewModel.error.observe(this, Observer { toast { text { "Something went wrong!" }}})
+        viewModel.error.observe(this, Observer { if(it!=null)toast { text { "Something went wrong!" }}})
 
     }
+
 }
