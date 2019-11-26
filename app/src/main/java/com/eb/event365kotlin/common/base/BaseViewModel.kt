@@ -1,6 +1,7 @@
 package com.eb.event365kotlin.common.base
 
 
+import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -44,7 +45,7 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope{
     }
 
     val handler = CoroutineExceptionHandler { _, exception ->
-        exception.printStackTrace()
+        Log.e("something went wrong",exception.message)
         if (exception is HttpException && exception.code()==401)
             changeState(authError = true)
         else

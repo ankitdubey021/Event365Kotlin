@@ -21,11 +21,13 @@ class HomeViewModel(val apiService: ApiService) : BaseViewModel(){
     }
 
     fun loadPosts(){
-        Log.e("view model","fired!")
+
         GlobalScope.launch(coroutineContext){
             changeState(load = true)
             val list= withContext(Dispatchers.IO) {
+
                 apiService.getProfile(AUTH)
+
             }
             changeState(false,false,null)
             showResult(list)
