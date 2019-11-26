@@ -8,11 +8,7 @@ import com.eb.event365kotlin.common.base.BaseViewModel
 import com.eb.event365kotlin.common.models.User
 import com.eb.event365kotlin.common.models.UserDao
 import com.eb.event365kotlin.common.utils.AUTH
-
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 class HomeViewModel(val apiService: ApiService) : BaseViewModel(){
@@ -25,7 +21,7 @@ class HomeViewModel(val apiService: ApiService) : BaseViewModel(){
     }
 
     fun loadPosts(){
-        GlobalScope.launch (Dispatchers.Main){
+        GlobalScope.launch (Dispatchers.Main + handler){
             val list=async (Dispatchers.IO) { apiService.getProfile(AUTH)}
             showResult(list.await())
         }
@@ -35,4 +31,7 @@ class HomeViewModel(val apiService: ApiService) : BaseViewModel(){
         _userDao.postValue(it.data.get(0))
     }
 
+    val handler = CoroutineExceptionHandler { _, exception ->
+        Log.d("", "$exception handled !")
+    }
 }
