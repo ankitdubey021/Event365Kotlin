@@ -22,12 +22,10 @@ class HomeViewModel(val apiService: ApiService) : BaseViewModel(){
 
     fun loadPosts(){
 
-        GlobalScope.launch(coroutineContext){
+        launch{
             changeState(load = true)
             val list= withContext(Dispatchers.IO) {
-
                 apiService.getProfile(AUTH)
-
             }
             changeState(false,false,null)
             showResult(list)

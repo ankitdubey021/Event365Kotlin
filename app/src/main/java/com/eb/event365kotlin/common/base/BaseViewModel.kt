@@ -6,22 +6,16 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import retrofit2.HttpException
 import kotlin.coroutines.CoroutineContext
 
 
 abstract class BaseViewModel : ViewModel(), CoroutineScope{
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job + handler
 
-    private val job: Job= Job()
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + SupervisorJob() + handler
 
     private val _loading : MutableLiveData<Boolean> = MutableLiveData()
     private val _throwable : MutableLiveData<Throwable> = MutableLiveData()
@@ -41,7 +35,7 @@ abstract class BaseViewModel : ViewModel(), CoroutineScope{
     @CallSuper
     override fun onCleared() {
         super.onCleared()
-        job.cancel()
+        coroutineContext.cancel()
     }
 
     val handler = CoroutineExceptionHandler { _, exception ->
